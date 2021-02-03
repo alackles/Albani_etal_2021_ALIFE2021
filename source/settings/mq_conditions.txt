@@ -4,15 +4,26 @@
 # REPS = [FIRST REP] [LAST REP]
 # if experiments are up to 3-digits, then start at 101. If up to 4-digits start at 1001, etc.
 # This convention solves sorting and zero-padding problems later.
-REPS = 101 103
+REPS = 103 110
 
 # Settings to override the config files, but will not be varied
 # Multiple CONSTANT definitions will be added together.
-#CONSTANT = GLOBAL-updates 10  WORLD-worldType Berry
+
+# Global Constants
 CONSTANT = GLOBAL-updates 250000
 CONSTANT = ARCHIVIST_LODWAP-dataSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-organismsSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-terminateAfter 200
+
+# PathFollow Constants
+CONSTANT = WORLD_PATHFOLLOW-mapNames "path1.txt,path2.txt,path3.txt,path4.txt"
+CONSTANT = WORLD_PATHFOLLOW-symbolValueMax 2
+CONSTANT = WORLD_PATHFOLLOW-evaluationsPerGeneration 2
+
+# Markov Brain Constants
+CONSTANT = BRAIN_MARKOV_GATES_ANN-Input_Range "1-8"
+
+# RNN Constants
 
 # VAR = [SHORT NAME]	[REAL NAME]	[conditon1,condition2,etc.]
 # Short name is used in this file, and also determines output directory names
@@ -25,8 +36,7 @@ VAR = MHT	BRAIN_MARKOV-hiddenThresholdSwitch
 VAR = RWR	BRAIN_RNN-weightRangeMapping
 VAR = RDR	BRAIN_RNN-discretizeRecurrent
 
-# Alternatively to VAR/EXCEPT, conditions can achieve a similar effect and still respect EXCEPT declarations
-#CONDITIONS = TSK=1.0,3.0  RF1="some message here"  RF2=2,[1,2,3,4]
+# Conditions can achieve a similar effect and still respect EXCEPT declarations
 CONDITIONS = BRN=Markov	MDA=0,1 MAA=0,1 MHT=0,1
 CONDITIONS = BRN=RNN RWR="0,1,0,1,0","1,1,1,1,1","1,0,2,0,1" RDR=-1,5,1
 
@@ -34,6 +44,7 @@ CONDITIONS = BRN=RNN RWR="0,1,0,1,0","1,1,1,1,1","1,0,2,0,1" RDR=-1,5,1
 # If all name/condition pairs are met for any EXCEPT, then that combination will not be run.
 EXCEPT = MDA=0 MAA=0
 EXCEPT = MDA=1 MAA=1
+
 # list of setting files (.cfg) which you want MABE to load with the -f option. files will be loaded in the order provided.
 SETTINGS = settings.cfg,settings_organism.cfg,settings_world.cfg
 
@@ -41,12 +52,7 @@ SETTINGS = settings.cfg,settings_organism.cfg,settings_world.cfg
 # these files will be copied to the working directory if necessary
 #OTHERFILES = my_file.txt
 OTHERFILES = path1.txt,path2.txt,path3.txt,path4.txt
-# a population_loader.plf file can be created using the contents here
-# be sure to set the -p GLOBAL-initPop population_loader.plf in CONSTANT definitions above
-#PLF = MASTER = 'LOD_organisms.csv'
-# or the following 2 lines with rep replacement works:
-#PLF = some_var = best 5 by ID from { 'LOD_organisms_{{rep}}.csv' }
-#PLF = MASTER = collapse some_var
+
 -----
 
 # JOBNAME will be appended before condition (C*) identifier - if "NONE" then job will have not JOBNAME
@@ -54,7 +60,6 @@ JOBNAME = NONE
 
 # EXECUTABLE is the name of program to run, may include a path
 EXECUTABLE = ./mabe
-#EXECUTABLE = mabe.exe
 
 -----
 # comma separate the mail type list ex: FAIL,END,REQUEUE
