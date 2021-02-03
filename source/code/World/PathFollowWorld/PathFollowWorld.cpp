@@ -73,7 +73,7 @@ Parameters::register_parameter("WORLD_PATHFOLLOW-swapSymbolsAfter", 1.0,
 
 shared_ptr<ParameterLink<std::string>> PathFollowWorld::mapNamesPL =
 Parameters::register_parameter("WORLD_PATHFOLLOW-mapNames",
-    (std::string)"../code/World/pathFollowWorld/path1.txt,../code/World/pathFollowWorld/path2.txt",
+    (std::string)"../code/World/PathFollowWorld/path1.txt,../code/World/PathFollowWorld/path2.txt",
     "list of text files with paths. in path files, X = start position, 0 = empty, 1 = forward path, 2 = turn right, 3 = turn right, 4 = end of path");
 
 shared_ptr<ParameterLink<bool>> PathFollowWorld::addFlippedMapsPL =
