@@ -18,9 +18,6 @@
 #include <Brain/RNNBrain/RNNBrain.h>
 #include <Genome/CircularGenome/CircularGenome.h>
 #include <Optimizer/TournamentOptimizer/TournamentOptimizer.h>
-#include <World/BerryWorld/BerryWorld.h>
-#include <World/BlockCatchWorld/BlockCatchWorld.h>
-#include <World/NBackWorld/NBackWorld.h>
 #include <World/PathFollowWorld/PathFollowWorld.h>
 
 //create-archivist factory signature

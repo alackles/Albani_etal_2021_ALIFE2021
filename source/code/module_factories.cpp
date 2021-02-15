@@ -93,18 +93,6 @@ auto makeWorld(std::shared_ptr<ParametersTable> PT) -> std::shared_ptr<AbstractW
   std::shared_ptr<AbstractWorld> newWorld;
   bool found = false;
   std::string worldType = AbstractWorld::worldTypePL->get(PT);
-  if (worldType == "Berry") {
-    newWorld = std::make_shared<BerryWorld>(PT);
-    found = true;
-    }
-  if (worldType == "BlockCatch") {
-    newWorld = std::make_shared<BlockCatchWorld>(PT);
-    found = true;
-    }
-  if (worldType == "NBack") {
-    newWorld = std::make_shared<NBackWorld>(PT);
-    found = true;
-    }
   if (worldType == "PathFollow") {
     newWorld = std::make_shared<PathFollowWorld>(PT);
     found = true;
@@ -126,6 +114,6 @@ void configureDefaultsAndDocumentation(){
   Parameters::root->setDocumentation("ARCHIVIST-outputMethod", "output method, [Default, LODwAP]");
   Parameters::root->setParameter("OPTIMIZER-optimizer", (std::string)"Tournament");
   Parameters::root->setDocumentation("OPTIMIZER-optimizer", "optimizer to be used, [Tournament]");
-  Parameters::root->setParameter("WORLD-worldType", (std::string)"NBack");
-  Parameters::root->setDocumentation("WORLD-worldType","world to be used, [Berry, BlockCatch, NBack, PathFollow]");
+  Parameters::root->setParameter("WORLD-worldType", (std::string)"PathFollow");
+  Parameters::root->setDocumentation("WORLD-worldType","world to be used, [PathFollow]");
 }
