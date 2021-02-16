@@ -25,11 +25,11 @@ CONSTANT = WORLD_PATHFOLLOW-evaluationsPerGeneration 2
 # all default
 
 # BlockyCatch Constants
-CONSTANT = WORLD_BLOCKCATCH-patternsToCatch "11L,11R"
-CONSTANT = WORLD_BLOCKCATCH-patternsToMiss "1111L,1111R"
+CONSTANT = WORLD_BLOCKCATCH-patternsToCatch 11L,11R
+CONSTANT = WORLD_BLOCKCATCH-patternsToMiss 1111L,1111R
 
 # Markov Brain Constants
-CONSTANT = BRAIN_MARKOV_GATES_ANN-Input_Range "1-8"
+CONSTANT = BRAIN_MARKOV_GATES_ANN-Input_Range 1-8
 
 # RNN Constants
 
