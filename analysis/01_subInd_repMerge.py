@@ -91,7 +91,7 @@ def merge_my_file(filename):
                     for dr in rdr: 
                         weighting = wr
                         discretize = dr
-                        globpath = source_datapath + "conditions/C*" + "BRN_" + brain + "__" + "RWR_" + wr + "__" + "RDR_" + dr + "/" + rep + "/"
+                        globpath = source_datapath + "C*" + "BRN_" + brain + "__" + "RWR_" + wr + "__" + "RDR_" + dr + "/" + rep + "/"
                         datapath = glob.glob(globpath + filename)
                         if len(datapath) == 1:
                             datapath = "".join(datapath)
