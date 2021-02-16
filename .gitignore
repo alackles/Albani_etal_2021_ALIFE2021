@@ -37,5 +37,4 @@ source/work/
 source/mbuild
 
 # Data files (no need to blow up people's computers)
-
-data/C*
+data/merged*.csv
