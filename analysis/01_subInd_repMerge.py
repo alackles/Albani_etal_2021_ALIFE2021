@@ -26,7 +26,7 @@ rwr = ["01010", "11111", "10201"] # rnn: weight biasing towards/away from 0
 rdr = ["1", "-1", "5"] # rnn: discretization
 
 first_rep = 101
-last_rep = 103
+last_rep = 150
 reps = [str(x) for x in range(first_rep, last_rep+1)]
 
 lod_data_filename = "LOD_data.csv"
@@ -36,7 +36,7 @@ pop_filename = "pop.csv"
 
 #ss_org_filename = "snapshot_organisms_10.csv"
 #ss_data_filename = "snapshot_data_10.csv"
-base_datapath = "../data/"
+base_datapath = "../source/work/"
 
 # list of the columns that we want to keep
 df_columns = ["update","ID","score_AVE"]
@@ -60,7 +60,7 @@ def merge_my_file(filename):
                     for ht in mht: 
                         gatetype = gate
                         threshhold = ht
-                        globpath = base_datapath + "conditions/C*" + "BRN_" + brain + "__" + code + "__" + "MHT_" + ht + "/" + rep + "/"
+                        globpath = base_datapath + "C*" + "BRN_" + brain + "__" + code + "__" + "MHT_" + ht + "/" + rep + "/"
                         datapath = glob.glob(globpath + filename)
                         if len(datapath) == 1:
                             datapath = "".join(datapath)
