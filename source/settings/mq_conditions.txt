@@ -17,7 +17,7 @@ CONSTANT = ARCHIVIST_LODWAP-terminateAfter 200
 CONSTANT = ARCHIVIST_DEFAULT-realtimeSequence :100
 
 # PathFollow Constants
-CONSTANT = WORLD_PATHFOLLOW-mapNames "path1.txt,path2.txt,path3.txt,path4.txt"
+CONSTANT = WORLD_PATHFOLLOW-mapNames path1.txt,path2.txt,path3.txt,path4.txt
 CONSTANT = WORLD_PATHFOLLOW-symbolValueMax 2
 CONSTANT = WORLD_PATHFOLLOW-evaluationsPerGeneration 2
 
