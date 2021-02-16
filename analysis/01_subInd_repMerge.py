@@ -36,8 +36,8 @@ pop_filename = "pop.csv"
 
 #ss_org_filename = "snapshot_organisms_10.csv"
 #ss_data_filename = "snapshot_data_10.csv"
-base_datapath = "../source/work/"
-
+source_datapath = "../source/work/"
+final_datapath = "../data/"
 # list of the columns that we want to keep
 df_columns = ["update","ID","score_AVE"]
 #genome_col = "GENOME_root::_sites" # this is the nasty default column name for the genome :(
@@ -60,7 +60,7 @@ def merge_my_file(filename):
                     for ht in mht: 
                         gatetype = gate
                         threshhold = ht
-                        globpath = base_datapath + "C*" + "BRN_" + brain + "__" + code + "__" + "MHT_" + ht + "/" + rep + "/"
+                        globpath = source_datapath + "C*" + "BRN_" + brain + "__" + code + "__" + "MHT_" + ht + "/" + rep + "/"
                         datapath = glob.glob(globpath + filename)
                         if len(datapath) == 1:
                             datapath = "".join(datapath)
@@ -91,7 +91,7 @@ def merge_my_file(filename):
                     for dr in rdr: 
                         weighting = wr
                         discretize = dr
-                        globpath = base_datapath + "conditions/C*" + "BRN_" + brain + "__" + "RWR_" + wr + "__" + "RDR_" + dr + "/" + rep + "/"
+                        globpath = source_datapath + "conditions/C*" + "BRN_" + brain + "__" + "RWR_" + wr + "__" + "RDR_" + dr + "/" + rep + "/"
                         datapath = glob.glob(globpath + filename)
                         if len(datapath) == 1:
                             datapath = "".join(datapath)
@@ -117,7 +117,7 @@ def merge_my_file(filename):
 
                         # add to our list of dataframes for each k
                         merged_file = merged_file.append(filemerge)
-    filepath = base_datapath + "merged_" + filename
+    filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
 files = [lod_data_filename, max_filename, pop_filename]
