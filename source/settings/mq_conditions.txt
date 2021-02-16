@@ -4,21 +4,29 @@
 # REPS = [FIRST REP] [LAST REP]
 # if experiments are up to 3-digits, then start at 101. If up to 4-digits start at 1001, etc.
 # This convention solves sorting and zero-padding problems later.
-REPS = 101 150
+REPS = 101 102
 
 # Settings to override the config files, but will not be varied
 # Multiple CONSTANT definitions will be added together.
 
 # Global Constants
-CONSTANT = GLOBAL-updates 250000
+CONSTANT = GLOBAL-updates 250
 CONSTANT = ARCHIVIST_LODWAP-dataSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-organismsSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-terminateAfter 200
+CONSTANT = ARCHIVIST_DEFAULT-realtimeSequence :100
 
 # PathFollow Constants
 CONSTANT = WORLD_PATHFOLLOW-mapNames "path1.txt,path2.txt,path3.txt,path4.txt"
 CONSTANT = WORLD_PATHFOLLOW-symbolValueMax 2
 CONSTANT = WORLD_PATHFOLLOW-evaluationsPerGeneration 2
+
+# NBack Constants
+# all default
+
+# BlockyCatch Constants
+CONSTANT = WORLD_BLOCKCATCH-patternsToCatch "2L,2R"
+CONSTANT = WORLD_BLOCKCATCH-patternsToMiss "4L,4R"
 
 # Markov Brain Constants
 CONSTANT = BRAIN_MARKOV_GATES_ANN-Input_Range "1-8"
@@ -28,6 +36,7 @@ CONSTANT = BRAIN_MARKOV_GATES_ANN-Input_Range "1-8"
 # VAR = [SHORT NAME]	[REAL NAME]	[conditon1,condition2,etc.]
 # Short name is used in this file, and also determines output directory names
 VAR = BRN	BRAIN-brainType
+VAR = WLD   WORLD-worldType
 
 VAR = MDA	BRAIN_MARKOV_GATES_DETERMINISTIC-allow
 VAR = MAA	BRAIN_MARKOV_GATES_ANN-allow
@@ -37,8 +46,8 @@ VAR = RWR	BRAIN_RNN-weightRangeMapping
 VAR = RDR	BRAIN_RNN-discretizeRecurrent
 
 # Conditions can achieve a similar effect and still respect EXCEPT declarations
-CONDITIONS = BRN=Markov	MDA=0,1 MAA=0,1 MHT=0,1
-CONDITIONS = BRN=RNN RWR="0,1,0,1,0","1,1,1,1,1","1,0,2,0,1" RDR=-1,5,1
+CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=Markov	MDA=0,1 MAA=0,1 MHT=0,1
+CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=RNN RWR="0,1,0,1,0","1,1,1,1,1","1,0,2,0,1" RDR=-1,5,1
 
 # EXCEPT = [SHORT NAME]=[condition],[SHORT NAME]=[condition],etc.
 # If all name/condition pairs are met for any EXCEPT, then that combination will not be run.
