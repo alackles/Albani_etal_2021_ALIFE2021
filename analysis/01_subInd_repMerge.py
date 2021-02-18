@@ -77,6 +77,7 @@ def merge_my_file(filename):
                             # let's merge them into one tidy file to output for later
                             filemerge["rep"] = rep
                             filemerge["brain"] = brain
+                            filemerge["world"] = world
                             filemerge["gatetype"] = gatetype
                             filemerge["threshhold"] = threshhold
                             filemerge["weighting"] = weighting
@@ -108,6 +109,7 @@ def merge_my_file(filename):
                             # let's merge them into one tidy file to output for later
                             filemerge["rep"] = rep
                             filemerge["brain"] = brain
+                            filemerge["world"] = world
                             filemerge["gatetype"] = gatetype
                             filemerge["threshhold"] = threshhold
                             filemerge["weighting"] = weighting
