@@ -25,8 +25,8 @@ worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
 # parameters in MABE
 # mapping onto the conditions we're interested in 
 
-density = {"MDA_0__MAA_1": "dense", "MDA_1__MAA_0": "sparse", "RWR_01010": "dense", "RWR_11111": "semisparse", "RWR_10201": "sparse"}
-disc = {"MHT_0": "continuous", "MHT_1": "discrete", "RDR_1": "discrete", "RDR_-1": "continuous", "RDR_5": "binned"}
+density = {"MDA_0__MAA_1": "dense", "MDA_1__MAA_0": "sparse", "RWR_01010": "dense", "RWR_01210": "sparse"}
+disc = {"MHT_0": "continuous", "MHT_1": "discrete", "RDR_1": "discrete", "RDR_-1": "continuous"}
 
 
 first_rep = 101
