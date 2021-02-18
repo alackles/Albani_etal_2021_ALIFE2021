@@ -10,7 +10,7 @@ REPS = 101 125
 # Multiple CONSTANT definitions will be added together.
 
 # Global Constants
-CONSTANT = GLOBAL-updates 250000
+CONSTANT = GLOBAL-updates 100000
 CONSTANT = ARCHIVIST_LODWAP-dataSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-organismsSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-terminateAfter 200
@@ -20,9 +20,11 @@ CONSTANT = ARCHIVIST_DEFAULT-realtimeSequence :100
 CONSTANT = WORLD_PATHFOLLOW-mapNames path1.txt,path2.txt,path3.txt,path4.txt
 CONSTANT = WORLD_PATHFOLLOW-symbolValueMax 2
 CONSTANT = WORLD_PATHFOLLOW-evaluationsPerGeneration 2
+CONSTANT = WORLD_PATHFOLLOW-inputMode binary
 
 # NBack Constants
 # all default
+CONSTANT = WORLD_NBACK-NsList "1,2,3,4,5:-1"
 
 # BlockyCatch Constants
 CONSTANT = WORLD_BLOCKCATCH-patternsToCatch 11L,11R
@@ -47,7 +49,7 @@ VAR = RDR	BRAIN_RNN-discretizeRecurrent
 
 # Conditions can achieve a similar effect and still respect EXCEPT declarations
 CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=Markov	MDA=0,1 MAA=0,1 MHT=0,1
-CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=RNN RWR="0,1,0,1,0","1,1,1,1,1","1,0,2,0,1" RDR=-1,5,1
+CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=RNN RWR="0,1,0,1,0","0,1,2,1,0" RDR=-1,1
 
 # EXCEPT = [SHORT NAME]=[condition],[SHORT NAME]=[condition],etc.
 # If all name/condition pairs are met for any EXCEPT, then that combination will not be run.
