@@ -21,10 +21,13 @@ import glob
 # conditions
 brains = ["Markov", "RNN"] # brains
 worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
-mgates = {"ann": "MDA_0__MAA_1", "det": "MDA_1__MAA_0"} #markov: gates
-mht = ["0", "1"] # markov: discretizing
-rwr = ["01010", "11111", "10201"] # rnn: weight biasing towards/away from 0
-rdr = ["1", "-1", "5"] # rnn: discretization
+
+# parameters in MABE
+# mapping onto the conditions we're interested in 
+
+density = {"MDA_0__MAA_1": "dense", "MDA_1__MAA_0": "sparse", "RWR_01010": "dense", "RWR_11111": "semisparse", "RWR_10201": "sparse"}
+disc = {"MHT_0": "continuous", "MHT_1": "discrete", "RDR_1": "discrete", "RDR_-1": "continuous", "RDR_5": "binned"}
+
 
 first_rep = 101
 last_rep = 109
@@ -49,77 +52,34 @@ def merge_my_file(filename):
     merged_file = pd.DataFrame(columns=df_columns)
     for world in worlds: 
         for brain in brains:
-            for rep in reps:
-                # find the files and make sure everything's fine
-                gatetype = "NA"
-                threshhold = "NA"
-                weighting = "NA"
-                discretize = "NA"
-                # TODO: MAKE THIS LESS HORRIBLE
-                if brain == "Markov":
-                    for gate, code in mgates.items():
-                        for ht in mht: 
-                            gatetype = gate
-                            threshhold = ht
-                            globpath = source_datapath + "C*" + "WLD_" + world + "__" + "BRN_" + brain + "__" + code + "__" + "MHT_" + ht + "/" + rep + "/"
-                            datapath = glob.glob(globpath + filename)
-                            if len(datapath) == 1:
-                                datapath = "".join(datapath)
-                                # if everything's fine, open up the files
-                                with open(datapath) as f:
-                                    print(datapath)
-                                    filemerge = pd.read_csv(f, sep=",", usecols=lambda c: c in df_columns)
-                            elif not len(datapath):
-                                print("No files matched.")
-                                print("Path: ", globpath)
-                                break
+            for kdense, vdense in density.items():
+                for kdisc, vdisc in disc.items():
+                    for rep in reps:
+                        globpath = source_datapath + "C*" + "WLD_" + world + "__" + "BRN_" + brain + "__" + kdense + "__" + kdisc + "/" + rep + "/"
+                        datapath = glob.glob(globpath + filename)
+                        if len(datapath) == 1:
+                            datapath = "".join(datapath)
+                            # if everything's fine, open up the files
+                            with open(datapath) as f:
+                                print(datapath)
+                                filemerge = pd.read_csv(f, sep=",", usecols=lambda c: c in df_columns)
+                        elif not len(datapath):
+                            print("No files matched.")
+                            print("Path: ", globpath)
+                            break
 
-                            # let's merge them into one tidy file to output for later
-                            filemerge["rep"] = rep
-                            filemerge["brain"] = brain
-                            filemerge["world"] = world
-                            filemerge["gatetype"] = gatetype
-                            filemerge["threshhold"] = threshhold
-                            filemerge["weighting"] = weighting
-                            filemerge["discretize"] = discretize
-                            # rename the other columns to be sensible
-                            filemerge = filemerge.rename(
-                                columns={"score_AVE": "score"})
+                        # let's merge them into one tidy file to output for later
+                        filemerge["rep"] = rep
+                        filemerge["brain"] = brain
+                        filemerge["world"] = world
+                        filemerge["density"] = vdense
+                        filemerge["discretize"] = vdisc
+                        # rename the other columns to be sensible
+                        filemerge = filemerge.rename(
+                            columns={"score_AVE": "score"})
 
-                            # add to our list of dataframes for each k
-                            merged_file = merged_file.append(filemerge)
-                elif brain == "RNN":
-                    for wr in rwr:
-                        for dr in rdr: 
-                            weighting = wr
-                            discretize = dr
-                            globpath = source_datapath + "C*" + "WLD_" + world + "__" + "BRN_" + brain + "__" + "RWR_" + wr + "__" + "RDR_" + dr + "/" + rep + "/"
-                            datapath = glob.glob(globpath + filename)
-                            if len(datapath) == 1:
-                                datapath = "".join(datapath)
-                                # if everything's fine, open up the files
-                                with open(datapath) as f:
-                                    print(datapath)
-                                    filemerge = pd.read_csv(f, sep=",", usecols=lambda c: c in df_columns)
-                            elif not len(datapath):
-                                print("No files matched.")
-                                print("Path: ", globpath)
-                                break
-
-                            # let's merge them into one tidy file to output for later
-                            filemerge["rep"] = rep
-                            filemerge["brain"] = brain
-                            filemerge["world"] = world
-                            filemerge["gatetype"] = gatetype
-                            filemerge["threshhold"] = threshhold
-                            filemerge["weighting"] = weighting
-                            filemerge["discretize"] = discretize
-                            # rename the other columns to be sensible
-                            filemerge = filemerge.rename(
-                                columns={"score_AVE": "score"})
-
-                            # add to our list of dataframes for each k
-                            merged_file = merged_file.append(filemerge)
+                        # add to our list of dataframes for each k
+                        merged_file = merged_file.append(filemerge)
     filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
