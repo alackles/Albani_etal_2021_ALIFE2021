@@ -4,13 +4,13 @@
 # REPS = [FIRST REP] [LAST REP]
 # if experiments are up to 3-digits, then start at 101. If up to 4-digits start at 1001, etc.
 # This convention solves sorting and zero-padding problems later.
-REPS = 101 102
+REPS = 101 125
 
 # Settings to override the config files, but will not be varied
 # Multiple CONSTANT definitions will be added together.
 
 # Global Constants
-CONSTANT = GLOBAL-updates 250
+CONSTANT = GLOBAL-updates 250000
 CONSTANT = ARCHIVIST_LODWAP-dataSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-organismsSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-terminateAfter 200
