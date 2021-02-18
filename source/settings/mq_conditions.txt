@@ -24,7 +24,7 @@ CONSTANT = WORLD_PATHFOLLOW-inputMode binary
 
 # NBack Constants
 # all default
-CONSTANT = WORLD_NBACK-NsList "1,2,3,4,5:-1"
+CONSTANT = WORLD_NBACK-NsList "1,2,3,4,5,6,7,8:-1"
 
 # BlockyCatch Constants
 CONSTANT = WORLD_BLOCKCATCH-patternsToCatch 11L,11R
