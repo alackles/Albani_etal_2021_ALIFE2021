@@ -36,8 +36,8 @@ compstruct = {
     }
 
 
-first_rep = 101
-last_rep = 109
+first_rep = 201
+last_rep = 225
 reps = [str(x) for x in range(first_rep, last_rep+1)]
 
 lod_data_filename = "LOD_data.csv"
@@ -82,6 +82,6 @@ def merge_my_file(filename):
     filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
-files = [lod_data_filename, max_filename]
+files = [lod_data_filename]
 for fname in files:
     merge_my_file(fname)
