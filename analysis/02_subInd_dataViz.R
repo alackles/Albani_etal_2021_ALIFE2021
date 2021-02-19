@@ -58,7 +58,7 @@ data_visualize <- function(data_filename) {
   df_score <- ggplot(data=df_summary, aes(x=update,y=mean.score, color=brain, linetype=density)) +
     geom_line() +
     #geom_ribbon(aes(ymin=lower.ci.score,ymax=upper.ci.score, fill=density), linetype=0, alpha=0.3) +
-    facet_wrap(~discretize*world, ncol = 3) +
+    facet_wrap(~discretize*world, ncol = 2) +
     theme_minimal() +
     theme(legend.position = "bottom") +
     xlab("Generations") +
@@ -66,7 +66,7 @@ data_visualize <- function(data_filename) {
     #geom_hline(yintercept = 0, linetype = "dashed", color="black") +
     theme(axis.title=element_text(size=14)) +
     NULL
-  score_filename <- paste(data_prefix, "_score.pdf")
+  score_filename <- paste(data_prefix, "_score.png", sep="")
   ggsave(filename=paste(fig_path,score_filename,sep=""),plot=df_score, width=9, height=9, units="in")
  #  ggsave(filename=paste(fig_path,solve_filename,sep=""),plot=df_solve, width=10, height=5, units="in")
  #  
