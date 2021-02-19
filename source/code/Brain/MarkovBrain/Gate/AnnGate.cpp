@@ -10,6 +10,9 @@
 
 #include "AnnGate.h"
 
+
+std::shared_ptr<ParameterLink<bool>> AnnGate::bitBehaviorPL = Parameters::register_parameter("BRAIN_MARKOV_GATES_ANN-bitBehavior", false, "if true, preform BIT operator on all inputs and output to and from this gate");
+
 std::shared_ptr<ParameterLink<std::string>> AnnGate::I_RangePL = Parameters::register_parameter("BRAIN_MARKOV_GATES_ANN-Input_Range", (std::string)"1-4", "range of number of inputs (min inputs-max inputs)");
 
 std::shared_ptr<ParameterLink<std::string>> AnnGate::biasRangePL = Parameters::register_parameter("BRAIN_MARKOV_GATES_ANN-biasRange", (std::string)"-1.0,1.0", "bias will be generated per node in this range and used to initalize gate on update");
@@ -57,14 +60,23 @@ AnnGate::AnnGate(std::vector<int> _inputs, int _output, std::vector<double> _wei
 	weightRangeMappingSums.push_back(weightRangeMappingSums[1] + weightRangeMapping[2]);
 	weightRangeMappingSums.push_back(weightRangeMappingSums[2] + weightRangeMapping[3]);
 	weightRangeMappingSums.push_back(weightRangeMappingSums[3] + weightRangeMapping[4]);
+
+	bitBehavior = bitBehaviorPL->get(PT);
 }
 
 void AnnGate::update(std::vector<double>& nodes, std::vector<double>& nextNodes) {  //this translates the input bits of the current states to the output bits of the next states
 	
 	double result = initalValue; // initalize this nodes return value
 	// accumulate weighted inputs
-	for (int i = 0; i < inputs.size(); i++) {
-		result += weights[i] * nodes[inputs[i]];
+	if (bitBehavior) {
+		for (int i = 0; i < inputs.size(); i++) {
+			result += weights[i] * Bit(nodes[inputs[i]]);
+		}
+	}
+	else {
+		for (int i = 0; i < inputs.size(); i++) {
+			result += weights[i] * nodes[inputs[i]];
+		}
 	}
 
 	// select activation function (if none/linear, do nothing)
@@ -100,7 +112,12 @@ void AnnGate::update(std::vector<double>& nodes, std::vector<double>& nextNodes)
 		result = (result / (double)(discretizeOutput - 1) * 2.0) - 1.0;
 	}
 
-	nextNodes[outputs[0]] += result;
+	if (bitBehavior) {
+		nextNodes[outputs[0]] += Bit(result);
+	}
+	else {
+		nextNodes[outputs[0]] += result;
+	}
 }
 
 std::shared_ptr<AbstractGate> AnnGate::makeCopy(std::shared_ptr<ParametersTable> _PT)
@@ -116,5 +133,6 @@ std::shared_ptr<AbstractGate> AnnGate::makeCopy(std::shared_ptr<ParametersTable>
 	newGate->discretizeOutput = discretizeOutput;
 	newGate->weightRangeMapping = weightRangeMapping;
 	newGate->weightRangeMappingSums = weightRangeMappingSums;
+	newGate->bitBehavior = bitBehavior;
 	return newGate;
 }

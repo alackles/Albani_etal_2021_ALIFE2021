@@ -16,6 +16,7 @@
 class AnnGate : public AbstractGate {  //conventional probabilistic gate
 public:
 
+	static std::shared_ptr<ParameterLink<bool>> bitBehaviorPL;
 	static std::shared_ptr<ParameterLink<std::string>> biasRangePL;
 	static std::shared_ptr<ParameterLink<int>> discretizeOutputPL;
 	static std::shared_ptr<ParameterLink<std::string>> weightRangeMappingPL;
@@ -25,6 +26,7 @@ public:
 	std::vector<double> weights = {};
 
 
+	bool bitBehavior = false;
 	double initalValue = 0.0;
 	int discretizeOutput = 0;
 	std::vector<double> weightRangeMapping = {};
