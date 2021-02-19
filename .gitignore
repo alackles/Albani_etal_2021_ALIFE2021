@@ -38,3 +38,6 @@ source/mbuild
 
 # Data files (no need to blow up people's computers)
 data/merged*.csv
+
+# Temporary hide figs until we have finals
+figs/
