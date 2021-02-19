@@ -25,6 +25,7 @@ worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
 # parameters in MABE
 # mapping onto the conditions we're interested in 
 
+<<<<<<< HEAD
 compstruct = {
     "BRN_Markov__MDA_1": "Markov", 
     "BRN_Markov__MAA_1__MBB_0": "Markov ANN", 
@@ -34,6 +35,10 @@ compstruct = {
     "BRN_RNN__RWR_01410__RDR_-1": "RNN sparse", 
     "BRN_RNN__RWR_01410__RDR_1": "RNN sparse discretized"
     }
+=======
+density = {"MDA_0__MAA_1": "dense", "MDA_1__MAA_0": "sparse", "RWR_01010": "dense", "RWR_01210": "sparse"}
+disc = {"MHT_0": "continuous", "MHT_1": "discrete", "RDR_1": "discrete", "RDR_-1": "continuous"}
+>>>>>>> 52cd7ad5517f7636c75653a4fe4997b553cc5d16
 
 
 first_rep = 101

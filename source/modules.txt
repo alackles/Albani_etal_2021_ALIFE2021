@@ -1,8 +1,8 @@
 % World
   - Logic16
   + NBack
-  - Test
   + BlockCatch
+  - Test
   * PathFollow
   - Berry
 
@@ -16,8 +16,8 @@
 
 % Brain
   - Wire
-  * Markov
   - CGP
+  * Markov
   - LSTM
   - BiLog
   - ANN
@@ -28,6 +28,6 @@
 % Optimizer
   - Islands
   - Lexicase
-  * Tournament
   - Roulette
+  * Tournament
 

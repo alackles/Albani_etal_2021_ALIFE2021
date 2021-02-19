@@ -4,13 +4,13 @@
 # REPS = [FIRST REP] [LAST REP]
 # if experiments are up to 3-digits, then start at 101. If up to 4-digits start at 1001, etc.
 # This convention solves sorting and zero-padding problems later.
-REPS = 101 102
+REPS = 201 225
 
 # Settings to override the config files, but will not be varied
 # Multiple CONSTANT definitions will be added together.
 
 # Global Constants
-CONSTANT = GLOBAL-updates 250
+CONSTANT = GLOBAL-updates 100000
 CONSTANT = ARCHIVIST_LODWAP-dataSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-organismsSequence :1000
 CONSTANT = ARCHIVIST_LODWAP-terminateAfter 200
@@ -20,9 +20,11 @@ CONSTANT = ARCHIVIST_DEFAULT-realtimeSequence :100
 CONSTANT = WORLD_PATHFOLLOW-mapNames path1.txt,path2.txt,path3.txt,path4.txt
 CONSTANT = WORLD_PATHFOLLOW-symbolValueMax 2
 CONSTANT = WORLD_PATHFOLLOW-evaluationsPerGeneration 2
+CONSTANT = WORLD_PATHFOLLOW-inputMode binary
 
 # NBack Constants
 # all default
+CONSTANT = WORLD_NBACK-NsList "1,2,3,4,5,6,7,8:-1"
 
 # BlockyCatch Constants
 CONSTANT = WORLD_BLOCKCATCH-patternsToCatch 11L,11R
@@ -30,29 +32,28 @@ CONSTANT = WORLD_BLOCKCATCH-patternsToMiss 1111L,1111R
 
 # Markov Brain Constants
 CONSTANT = BRAIN_MARKOV_GATES_ANN-Input_Range 1-8
-
+CONSTANT = BRAIN_MARKOV_GATES_ANN-initialCount 32
 # RNN Constants
 
 # VAR = [SHORT NAME]	[REAL NAME]	[conditon1,condition2,etc.]
 # Short name is used in this file, and also determines output directory names
 VAR = BRN	BRAIN-brainType
-VAR = WLD   WORLD-worldType
+VAR = WLD       WORLD-worldType
 
 VAR = MDA	BRAIN_MARKOV_GATES_DETERMINISTIC-allow
 VAR = MAA	BRAIN_MARKOV_GATES_ANN-allow
-VAR = MHT	BRAIN_MARKOV-hiddenThresholdSwitch
+VAR = MBB	BRAIN_MARKOV_GATES_ANN-bitBehavior
 
 VAR = RWR	BRAIN_RNN-weightRangeMapping
 VAR = RDR	BRAIN_RNN-discretizeRecurrent
 
 # Conditions can achieve a similar effect and still respect EXCEPT declarations
-CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=Markov	MDA=0,1 MAA=0,1 MHT=0,1
-CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=RNN RWR="0,1,0,1,0","1,1,1,1,1","1,0,2,0,1" RDR=-1,5,1
+CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=Markov	MDA=1
+CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=Markov	MAA=1 MBB=0,1
+CONDITIONS = WLD=BlockCatch,PathFollow,NBack BRN=RNN RWR="0,1,0,1,0","0,1,4,1,0" RDR=-1,1
 
 # EXCEPT = [SHORT NAME]=[condition],[SHORT NAME]=[condition],etc.
 # If all name/condition pairs are met for any EXCEPT, then that combination will not be run.
-EXCEPT = MDA=0 MAA=0
-EXCEPT = MDA=1 MAA=1
 
 # list of setting files (.cfg) which you want MABE to load with the -f option. files will be loaded in the order provided.
 SETTINGS = settings.cfg,settings_organism.cfg,settings_world.cfg
