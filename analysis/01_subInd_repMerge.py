@@ -27,8 +27,8 @@ worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
 
 compstruct = {
     "BRN_Markov__MDA_1": "Markov", 
-    "BRN_Markov__MAA_1__MBB_0": "Markov ANN", 
-    "BRN_Markov__MAA_1__MBB_1": "Markov ANN bitted", 
+    "BRN_Markov__MDA_0__MAA_1__MBB_0": "Markov ANN", 
+    "BRN_Markov__MDA_0__MAA_1__MBB_1": "Markov ANN bitted", 
     "BRN_RNN__RWR_01010__RDR_-1": "RNN", 
     "BRN_RNN__RWR_01010__RDR_1": "RNN discretized", 
     "BRN_RNN__RWR_01410__RDR_-1": "RNN sparse", 
