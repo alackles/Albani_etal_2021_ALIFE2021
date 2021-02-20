@@ -37,7 +37,7 @@ compstruct = {
 
 
 first_rep = 201
-last_rep = 225
+last_rep = 260
 reps = [str(x) for x in range(first_rep, last_rep+1)]
 
 lod_data_filename = "LOD_data.csv"
@@ -67,7 +67,7 @@ def merge_my_file(filename):
                 elif not len(datapath):
                     print("No files matched.")
                     print("Path: ", globpath)
-                    break
+                    pass
 
                 # let's merge them into one tidy file to output for later
                 filemerge["rep"] = rep
@@ -82,6 +82,6 @@ def merge_my_file(filename):
     filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
-files = [lod_data_filename]
+files = [lod_data_filename, max_filename, pop_filename]
 for fname in files:
     merge_my_file(fname)
