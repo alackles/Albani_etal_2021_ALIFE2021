@@ -15,8 +15,7 @@ fig_path <- paste(proj_path, "figs/", sep="")
 library(tidyverse)
 
 # Files to process
-#datafiles <- c("merged_LOD_data.csv", "merged_pop.csv", "merged_max.csv")
-datafiles <- c("merged_LOD_data.csv")
+datafiles <- c("merged_LOD_data.csv", "merged_pop.csv", "merged_max.csv")
 
 #############
 # Visualization Function
@@ -25,9 +24,6 @@ datafiles <- c("merged_LOD_data.csv")
 # file must be ALREADY MERGED using 01_subInd_repMerge.py
 data_load <- function(data_filename) {
 
-  # grab the file prefix (before .csv)
-  # credit: https://stackoverflow.com/questions/30836747/regex-to-remove-csv-in-r
-  data_prefix <- str_extract(data_filename, '.*(?=\\.csv$)')
   
   # read in the datafile
   df <- read.csv(paste(data_path, data_filename, sep=""))
@@ -49,8 +45,13 @@ data_load <- function(data_filename) {
   
 }
   
-data_viz_time <- function(df) {
+data_viz_time <- function(df, data_filename) {
   ## DATA PROCESSING & PLOTTING FOR SCORE ACROSS TIME
+  
+  # grab the file prefix (before .csv)
+  # credit: https://stackoverflow.com/questions/30836747/regex-to-remove-csv-in-r
+  data_prefix <- str_extract(data_filename, '.*(?=\\.csv$)')
+
   #filter the data down to what we actually want
   df_meanscore <- df %>%
     group_by(compstruct, update, world) %>% # group_by preserves the columns we want to have as variables
@@ -75,27 +76,39 @@ data_viz_time <- function(df) {
     NULL
   
   # ouput file
-  score_filename <-"LOD_world_score.png"
+  score_filename <- paste(data_prefix, "_time_score.png",sep="")
   ggsave(filename=paste(fig_path,score_filename,sep=""),plot=plot_meanscore, width=12, height=8, units="in")
-  paste(data_prefix, "done")
-  
+
 }
 
-data_viz_end <- function(df) {
+data_viz_end <- function(df, data_filename) {
 
   ## DATA PROCESSING & VISUALIZATION FOR FINAL SCORE
   
-  df_endscore <- df %>%
-    filter(update == 100000) %>%
+  # grab the file prefix (before .csv)
+  # credit: https://stackoverflow.com/questions/30836747/regex-to-remove-csv-in-r
+  data_prefix <- str_extract(data_filename, '.*(?=\\.csv$)')
+
+  df_meanscore <- df %>%
+    group_by(compstruct, update, world) %>% # group_by preserves the columns we want to have as variables
+    summarise(mean.score=mean(score),
+              sd.score=sd(score),
+              n=n()) %>%
+    filter(n != 1) %>%
+    mutate(se.score = sd.score/sqrt(n), # get confidence intervals
+           lower.ci.score = mean.score - qt(1-(0.05/2), n-1)*se.score,
+           upper.ci.score = mean.score + qt(1-(0.05/2), n-1)*se.score) %>%
     {.}
   
+  df_endscore <- df %>%
+    filter(update == 150000) %>%
+    {.}
+ 
   plot_endscore <- ggplot(data=df_endscore,
                      aes(x=compstruct, y=score)) +
-    geom_violin(aes(fill=compstruct, alpha=0.3), color=NA) +
+    geom_boxplot(aes(fill=compstruct, alpha=0.3, color=compstruct)) +
     geom_dotplot(binaxis="y", stackdir="center", dotsize=0.3, stackratio=0.8, binwidth=0.025,
                  aes(fill=compstruct)) +
-    stat_summary(fun=median, geom="point",
-                   shape=18, size=3, fill="white") +
     facet_wrap(~world) +
     theme_bw() +
     theme(legend.position = "none") +
@@ -103,11 +116,9 @@ data_viz_end <- function(df) {
     ylab("Final Score") +
     theme(axis.title=element_text(size=14)) +
     theme(axis.text.x = element_text(angle=45, hjust=1))+
-    #coord_flip() +
-    #scale_x_discrete(limits=rev(levels(df$compstruct))) +
     NULL
   
-  endscore_filename <- "LOD_vert_endscore.png"
+  endscore_filename <- paste(data_prefix, "_end_score.png",sep="")
   ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=12, height=8, units="in")
   paste("endscore done")
 }
@@ -116,11 +127,7 @@ data_viz_end <- function(df) {
 # Call the function
 ##########
 
-
-files <- lapply(datafiles, data_load) %>%
-  lapply(data_viz_end) %>%
-  {.}
-
-files <- lapply(datafiles, data_load) %>%
-  lapply(data_viz_time) %>%
-  {.}
+for (file in datafiles) {
+  data_viz_end(data_load(file), file)
+  data_viz_time(data_load(file),file)
+}
