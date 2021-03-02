@@ -48,10 +48,16 @@ public:
 
     std::vector<double> biasRange = { 0,0 };
     std::vector<std::vector<double>> initialValues;
-    std::string activationFunction;
 
     std::vector<std::vector<double>> nodes;
     std::vector<std::vector<std::vector<double>>> weights;
+
+
+    //   activation Function Types: 0:none, 1:linear, 2:tanh, 3:tanh0_1, 4:bit, 5:triangle, 6:invtriangle, 7:sin, 8:genome
+    std::vector<std::vector<int>> activationFunctions; // activation function for each node
+    int activationFunction;
+    std::vector<std::string> activationFunctionNames = { "none","linear","tanh","tanh0_1","bit","triangle","invtriangle","sin" };
+
 	RNNBrain() = delete;
 
 	RNNBrain(int _nrInNodes, int _nrOutNodes, std::shared_ptr<ParametersTable> _PT = nullptr);
@@ -71,7 +77,7 @@ public:
 	virtual void resetBrain() override;
 	virtual void resetOutputs() override;
 
-    void applyActivationToLayer(std::vector<double> &V);
+    void applyActivation(double &val, int functionID);
 
     virtual std::shared_ptr<AbstractBrain> makeCopy(std::shared_ptr<ParametersTable> _PT = nullptr) override;
 
@@ -111,7 +117,7 @@ public:
         int brainHiddenCount = nrRecurrentValues;
         int nodesCount = brainInCount + brainOutCount + brainHiddenCount;
 
-        std::vector<std::vector<int>> connectome(nodesCount, std::vector<int>(nodesCount, 1)); // assume all connected
+        std::vector<std::vector<int>> connectome(nodesCount, std::vector<int>(nodesCount, 0)); // assume all connected
         for (int r = 0; r < connectome.size(); r++) {
             for (int c = 0; c < connectome[0].size(); c++) {
                 if (c < brainInCount) {
@@ -122,6 +128,37 @@ public:
                 }
             }
         }
+
+        int lastLayerIndex = weights.size() - 1;
+        for (size_t c = 0; c < brainHiddenCount + brainOutCount; c++) {
+            // index c from last nodes layer
+            // we need to determin if there is a connection from c to which nodes on first layer
+            // we will start at c and trace back to create a set of input and recurrent from the first layer
+            // weights to c are weights[lastLayerIndex-1][n][r]; that is, for each node in the prior layer, the [c]th value
+            // if there are more then 2 layers (ie. input and output), we need to keep a temp list for intermidate layers
+            std::set<size_t> priorLayerLinks;
+            std::set<size_t> priorPriorLayerLinks;
+            priorLayerLinks = { c }; // start with just this c in prior layers
+            int currentLayerIndex = lastLayerIndex; // start looking at last weights layer
+            while (currentLayerIndex >= 0) {
+                priorPriorLayerLinks = {};
+                for (size_t pn = 0; pn < weights[currentLayerIndex].size(); pn++) {
+                    for (auto pc : priorLayerLinks) {
+                        if (weights[currentLayerIndex][pn][pc] != 0) {
+                            priorPriorLayerLinks.insert(pn);
+                        }
+                    }
+                }
+                priorLayerLinks = priorPriorLayerLinks;
+                currentLayerIndex--;
+            }
+            for (auto n : priorLayerLinks) {
+                auto ac = c + brainInCount;
+                auto an = (n < brainInCount) ? n : n + brainOutCount;
+                connectome[an][ac] = 1; // there is a connection
+            }
+        }
+
         return(connectome);
     }
 

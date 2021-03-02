@@ -38,7 +38,8 @@ std::shared_ptr<ParameterLink<std::string>> RNNBrain::biasRangePL = Parameters::
 
 std::shared_ptr<ParameterLink<std::string>> RNNBrain::activationFunctionPL = Parameters::register_parameter(
     "BRAIN_RNN-activationFunction", (std::string)"tanh",
-    "choose from linear(i.e. none),tanh,tanh(0-1),bit,triangle");
+    "choose from \"linear\"(or \"none\"),\"tanh\",\"tanh(0-1)\",\"bit\",\"triangle\",\"invtriangle\",\"sin\",\n"
+    "or, \"genome\" to allow evolution to pick");
 
 
 
@@ -46,6 +47,31 @@ RNNBrain::RNNBrain(int _nrInNodes, int _nrOutNodes, std::shared_ptr<ParametersTa
     genomeName = genomeNamePL->get(_PT);
     nrRecurrentValues = nrOfRecurrentNodesPL->get(_PT);
     discretizeRecurrent = discretizeRecurrentPL->get(_PT);
+    if (activationFunctionPL->get(_PT) == "none" || activationFunctionPL->get(_PT) == "linear") {
+        activationFunction = 1;
+    }
+    if (activationFunctionPL->get(_PT) == "tanh") {
+        activationFunction = 2;
+    }
+    if (activationFunctionPL->get(_PT) == "tanh(0-1)") {
+        activationFunction = 3;
+    }
+    if (activationFunctionPL->get(_PT) == "bit") {
+        activationFunction = 4;
+    }
+    if (activationFunctionPL->get(_PT) == "triangle") {
+        activationFunction = 5;
+    }
+    if (activationFunctionPL->get(_PT) == "invtriangle") {
+        activationFunction = 6;
+    }
+    if (activationFunctionPL->get(_PT) == "sin") {
+        activationFunction = 7;
+    }
+    if (activationFunctionPL->get(_PT) == "genome") {
+        activationFunction = 8;
+    }
+
     convertCSVListToVector(hiddenLayerSizesPL->get(), hiddenLayerSizes);
     convertCSVListToVector(biasRangePL->get(), biasRange);
     convertCSVListToVector(weightRangeMappingPL->get(), weightRangeMapping);
@@ -72,6 +98,7 @@ std::shared_ptr<AbstractBrain> RNNBrain::makeBrain(std::unordered_map<std::strin
         newBrain->hiddenLayerSizes.clear();
     }
     newBrain->nodes.resize(2 + newBrain->hiddenLayerSizes.size());
+
     // resize input layer
     newBrain->nodes[0].resize((size_t)newBrain->nrInputValues + newBrain->nrRecurrentValues);
     // resize output layer
@@ -87,7 +114,6 @@ std::shared_ptr<AbstractBrain> RNNBrain::makeBrain(std::unordered_map<std::strin
     for (size_t i = 0; i < (int)newBrain->weights.size(); i++) {
         // add space for a vector of weights for each node
         newBrain->weights[i].resize((int)newBrain->nodes[i].size());
-
         // for each node in this layer
         for (size_t j = 0; j < (int)newBrain->weights[i].size(); j++) {
             // add a weight for the wire from this node to each node in the next node layer
@@ -122,20 +148,23 @@ std::shared_ptr<AbstractBrain> RNNBrain::makeBrain(std::unordered_map<std::strin
                 }
                 //std::cout << value << std::endl;
                 newBrain->weights[i][j][k] = value;
-                //newBrain->weights[i][j][k] = value * value * value * 4.0;
+                //newBrain->weights[i][j][k] = (value * value * value) * 4.0;
             }
         }
     }
 
+    newBrain->activationFunctions.push_back({}); // first row empty because it's inputs
     newBrain->initialValues.push_back({}); // first row empty because it's inputs
     for (size_t i = 1; i < newBrain->nodes.size(); i++) {
         newBrain->initialValues.push_back(std::vector<double>(newBrain->nodes[i].size()));
+        newBrain->activationFunctions.push_back(std::vector<int>(newBrain->nodes[i].size()));
         for (size_t j = 0; j < newBrain->initialValues[i].size(); j++) {
             newBrain->initialValues[i][j] = genomeHandler->readDouble(biasRange[0], biasRange[1]);
+            newBrain->activationFunctions[i][j] = (activationFunction == 8) ? genomeHandler->readInt(1,7) : activationFunction;
         }
     }
 
-    //showBrain();
+    //newBrain->showBrain();
     //exit(0);
 
  	return newBrain;
@@ -207,20 +236,25 @@ void RNNBrain::update() {
     }
     // for every layer, update the nodes in that layer
     // skip first layer, because it's input and recurrent
+    
+    //std::cout << std::endl;
+
     for (size_t layer = 1; layer < nodes.size(); layer++) {
         for (size_t i = 0; i < nodes[layer].size(); i++) {
             nodes[layer][i] = initialValues[layer][i];
+            //std::cout << "init val: " << layer << "," << i << "  " << nodes[layer][i] << std::endl;
         }
         // for each node in the prior layer
-        for (size_t i = 0; i < nodes[layer - 1].size(); i++) {
+        for (size_t j = 0; j < nodes[layer].size(); j++) {
             // for each node in this layer
-            for (size_t j = 0; j < nodes[layer].size(); j++) {
+            for (size_t i = 0; i < nodes[layer - 1].size(); i++) {
+                //std::cout << ":: " << layer << "  " << j << "," << i << "  " << nodes[layer][j] << " + " << weights[(size_t)(layer)-1][i][j] << " * " << nodes[(size_t)(layer)-1][i] <<std::endl;
                 // add the node value from the prior layer * that nodes weight for this node to this node
                 nodes[layer][j] += weights[(size_t)(layer) - 1][i][j] * nodes[(size_t)(layer) - 1][i];
             }
+            applyActivation(nodes[layer][j], activationFunctions[layer][j]);
         }
         // apply apply Activation Function to this layer
-        applyActivationToLayer(nodes[layer]);
     }
     int lastLayer = nodes.size() - 1;
     for (size_t i = 0; i < nrRecurrentValues; i++) {
@@ -244,6 +278,7 @@ void RNNBrain::update() {
             nodes[0][(size_t)(nrInputValues)+i]  = (nodes[0][(size_t)(nrInputValues)+i] / (double)(discretizeRecurrent-1) * 2.0) - 1.0;
         }
     }
+
     // output and hidden+1 have been set so it's time to record state...
     if (recordActivity) {
         OutputStates.push_back(std::vector<double>(nrOutputValues));
@@ -257,14 +292,17 @@ void RNNBrain::update() {
         lifeTimes.back()++;
     }
 
+    
     /*
+    std::cout << std::endl;
     for(int l=0;l<nodes.size();l++){
         printf("layer: %i : ",l);
         for(int i=0;i<nodes[l].size();i++)
             printf("%0.2f ",nodes[l][i]);
         printf("\n");
     }
-     //*/
+    */
+    
 }
 
 void inline RNNBrain::resetOutputs() {
@@ -280,30 +318,81 @@ std::string RNNBrain::description() {
 
 DataMap RNNBrain::getStats(std::string& prefix) {
 	DataMap dataMap;
-    
+    int posCount = 0;
+    int negCount = 0;
+    int zeroCount = 0;
+
+    double th = 0;
+    for (size_t i = 0; i < weights.size(); i++) {
+        for (size_t j = 0; j < weights[i].size(); j++) {
+            for (size_t k = 0; k < weights[i][j].size(); k++) {
+                if (weights[i][j][k] > th) {
+                    posCount++;
+                }
+                else if (weights[i][j][k] < th) {
+                    negCount++;
+                }
+                else {
+                    zeroCount++;
+                }
+            }
+        }
+    }
+    dataMap.set("RNN_weights_pos", posCount);
+    dataMap.set("RNN_weights_neg", negCount);
+    dataMap.set("RNN_weights_zero", zeroCount);
+
+    std::vector<int> activationFunctionCounts(activationFunctionNames.size(), 0);
+    for (auto L : activationFunctions) {
+        for (auto F : L) {
+            activationFunctionCounts[F]++;
+        }
+    }
+    for (int i = 0; i < activationFunctionNames.size(); i++) {
+        dataMap.set("RNN_" + activationFunctionNames[i] + "_count", activationFunctionCounts[i]);
+    }
+
 
 	return (dataMap);
 }
 
-void RNNBrain::applyActivationToLayer(std::vector<double> &V){
-    for (auto&& result : V) {
+void RNNBrain::applyActivation(double &val, int functionID){
+    //std::cout << " in applyActivationToLayer " << activationFunction << std::endl;
         // select activation function (if none/linear, do nothing)
-        if (activationFunction == "none" || activationFunction == "linear") {
+        if (functionID == 1) {
             // if none / linear, do nothing
+            //std::cout << val << " > linear > " << val << std::endl;
         }
-        else if (activationFunction == "tanh") {
-            result = tanh(result);
+        else if (functionID == 2) {
+            //std::cout << val << " > tanh > ";
+            val = tanh(val);
+            //std::cout << val << std::endl;
         }
-        else if (activationFunction == "tanh(0-1)") {
-            result = tanh(result) * .5 + .5;
+        else if (functionID == 3) {
+            //std::cout << val << " > tanh(0-1) > ";
+            val = tanh(val) * .5 + .5;
+            //std::cout << val << std::endl;
         }
-        else if (activationFunction == "bit") {
-            result = Bit(result);
+        else if (functionID == 4) {
+            //std::cout << val << " > Bit > ";
+            val = Bit(val);
+            //std::cout << val << std::endl;
         }
-        else if (activationFunction == "triangle") {
-            result = std::max(1.0 - std::abs(result * 2.0), -1.0);
+        else if (functionID == 5) {
+            //std::cout << val << " > triangle > ";
+            val = std::max(1.0 - std::abs(val * 2.0), -1.0);
+            //std::cout << val << std::endl;
         }
-    }
+        else if (functionID == 6) {
+            //std::cout << val << " > invtirangle > ";
+            val = std::min(std::abs(val * 2.0)-1.0, 1.0);
+            //std::cout << val << std::endl;
+        }
+        else if (functionID == 7) {
+            //std::cout << val << " > sin > ";
+            val = sin(val * 3.14159);
+            //std::cout << val << std::endl;
+        }
 }
 
 std::shared_ptr<AbstractBrain> RNNBrain::makeCopy(std::shared_ptr<ParametersTable> _PT){
@@ -314,21 +403,51 @@ std::shared_ptr<AbstractBrain> RNNBrain::makeCopy(std::shared_ptr<ParametersTabl
     newBrain->nodes = nodes;
     newBrain->weights = weights;
     newBrain->initialValues = initialValues;
-
-    //for(int i=0;i<(int)weights.size();i++)
-    //    for(int j=0;j<(int)weights[i].size();j++)
-    //        for(int k=0;k<(int)weights[i][j].size();k++)
-    //            newBrain->weights[i][j][k]=weights[i][j][k];
     
     return newBrain;
 }
 
 
-void RNNBrain::showBrain(){
-    printf("I: %i O:%i \n",nrInputValues, nrOutputValues);
-    for(int l=0;l<(int)nodes.size();l++){
-        printf("layer %i size %i\n",l,(int)nodes[l].size());
+void RNNBrain::showBrain() {
+    printf("I: %i O:%i \n", nrInputValues, nrOutputValues);
+    for (int l = 0; l < (int)nodes.size(); l++) {
+        printf("layer %i size %i\n", l, (int)nodes[l].size());
     }
+
+    /*
+    if (Global::update > 5) {
+        weights[0][0][0] = 1;
+        weights[0][0][1] = 1;
+        weights[0][1][0] = 1;
+        weights[0][1][1] = 1;
+        weights[1][0][0] = 1;
+        weights[1][1][0] = -1;
+
+        initialValues[1][0] = -.5;
+        initialValues[1][1] = -1;
+        initialValues[2][0] = -.4;
+    }
+
+    for (auto wl : weights) {
+        for (auto wc : wl) {
+            std::cout << "w: ";
+            for (auto w : wc) {
+                std::cout << w << " ";
+            }
+            std::cout << " : ";
+        }
+        std::cout << std::endl;
+    }
+    for (auto bl : initialValues) {
+        std::cout << "b: ";
+        for (auto b : bl) {
+            std::cout << b << " ";
+        }
+        std::cout << std::endl;
+    }
+    */
+
+
 }
 
 
