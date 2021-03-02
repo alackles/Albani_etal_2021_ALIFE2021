@@ -1,0 +1,9 @@
+code/Utilities/gitversion.h
+code/module_factories.h
+code/module_factories.cpp
+mbuild
+build/
+work/
+
+# Ignore python's cache:
+__pycache__/

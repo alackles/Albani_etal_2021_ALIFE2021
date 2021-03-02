@@ -36,8 +36,8 @@ compstruct = {
     }
 
 
-first_rep = 201
-last_rep = 260
+first_rep = 301
+last_rep = 320
 reps = [str(x) for x in range(first_rep, last_rep+1)]
 
 lod_data_filename = "LOD_data.csv"
