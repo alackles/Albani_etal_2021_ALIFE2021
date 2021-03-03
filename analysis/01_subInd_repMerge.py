@@ -78,10 +78,10 @@ def merge_my_file(filename):
                     columns={"score_AVE": "score"})
 
                 # add to our list of dataframes for each k
-                merged_file = merged_file.append(filemerge)
+                merged_file = merged_file.append(filemerge, sort=False)
     filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
-files = [lod_data_filename, max_filename, pop_filename]
+files = [lod_data_filename]
 for fname in files:
     merge_my_file(fname)
