@@ -23,7 +23,6 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Command-line inputs for the data merger script.')
 parser.add_argument('reps',metavar='-repRange', type=str, nargs=2, help='First and last rep to merge, space-separated.')
-parser.add_argument('files', metavar='-files', type=str, nargs='?', help='Comma-separated files (e.g. max.csv,pop.csv,LOD_data.csv) to merge. If none specified will only merge LOD_data.csv)')
 # conditions
 # brains = ["Markov", "RNN"] # brains
 worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
@@ -86,10 +85,6 @@ def merge_my_file(filename):
     filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
-if parser.parse_args().files != "":
-    files = parser.parse_args().files.split(',')
-else:
-    files=[lod_data_filename]
 
 files = [lod_data_filename]
 for fname in files:
