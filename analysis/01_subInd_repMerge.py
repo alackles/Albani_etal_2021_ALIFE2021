@@ -87,7 +87,7 @@ def merge_my_file(filename):
     merged_file.to_csv(filepath,index=False)
 
 if parser.parse_args().files != "":
-    files = parser.parse_args.files
+    files = parser.parse_args().files
 else:
     files=[lod_data_filename]
 
