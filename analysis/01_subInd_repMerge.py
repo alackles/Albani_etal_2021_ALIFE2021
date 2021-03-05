@@ -15,9 +15,14 @@
 import pandas as pd
 import csv
 import glob
+import argparse
 
 # constants, filenames, and other things like that
 
+# command-line inputs
+
+parser = argparse.ArgumentParser(description='Command-line inputs for the data merger script.')
+parser.add_argument('reps',metavar='-repRange', type=str, nargs=2, help='First and last rep to merge, space-separated.')
 # conditions
 # brains = ["Markov", "RNN"] # brains
 worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
@@ -36,9 +41,8 @@ compstruct = {
     }
 
 
-first_rep = 301
-last_rep = 320
-reps = [str(x) for x in range(first_rep, last_rep+1)]
+rep_range = parser.parse_args().reps
+reps = rep_range.split(" ")
 
 lod_data_filename = "LOD_data.csv"
 max_filename = "max.csv"
