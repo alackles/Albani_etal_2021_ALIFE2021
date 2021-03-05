@@ -41,8 +41,7 @@ compstruct = {
     }
 
 
-rep_range = parser.parse_args().reps
-reps = rep_range.split(" ")
+reps = parser.parse_args().reps
 
 lod_data_filename = "LOD_data.csv"
 max_filename = "max.csv"
