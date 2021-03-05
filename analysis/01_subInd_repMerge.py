@@ -22,7 +22,7 @@ import argparse
 # command-line inputs
 
 parser = argparse.ArgumentParser(description='Command-line inputs for the data merger script.')
-parser.add_argument('reps',metavar='-repRange', type=str, nargs=2, help='First and last rep to merge, space-separated.')
+parser.add_argument('reps',metavar='-repRange', type=int, nargs=2, help='First and last rep to merge, space-separated.')
 # conditions
 # brains = ["Markov", "RNN"] # brains
 worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
@@ -41,7 +41,9 @@ compstruct = {
     }
 
 
-reps = parser.parse_args().reps
+first_rep = parser.parse_args().reps[0]
+last_rep = parser.parse_args().reps[1]
+reps = [str(x) for x in range(first_rep,last_rep+1)]
 
 lod_data_filename = "LOD_data.csv"
 max_filename = "max.csv"
