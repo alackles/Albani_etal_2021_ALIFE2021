@@ -15,7 +15,7 @@ fig_path <- paste(proj_path, "figs/", sep="")
 library(tidyverse)
 
 # Files to process
-datafiles <- c("merged_LOD_data.csv", "merged_pop.csv", "merged_max.csv")
+datafiles <- c("merged_LOD_data.csv")
 
 #############
 # Visualization Function
@@ -101,15 +101,26 @@ data_viz_end <- function(df, data_filename) {
     {.}
   
   df_endscore <- df %>%
-    filter(update == 150000) %>%
+    filter(update == 100000) %>%
     {.}
+  
+  # reorder the compstruct factors
+  color_scale <- c("Markov" = "#CC3300",
+                    "Markov ANN bitted" = "#FF6633",
+                    "Markov ANN"="#FF9966",
+                    "RNN sparse discretized"="#CC99FF",
+                    "RNN discretized"="#9966CC",
+                    "RNN sparse"="#9966CC",
+                    "RNN"="#663399")
  
   plot_endscore <- ggplot(data=df_endscore,
                      aes(x=compstruct, y=score)) +
     geom_boxplot(aes(fill=compstruct, alpha=0.3, color=compstruct)) +
     geom_dotplot(binaxis="y", stackdir="center", dotsize=0.3, stackratio=0.8, binwidth=0.025,
                  aes(fill=compstruct)) +
-    facet_wrap(~world) +
+    scale_color_manual(values=color_scale) + 
+    scale_fill_manual(values=color_scale) + 
+    facet_wrap(~world, ncol=1, scales="free") +
     theme_bw() +
     theme(legend.position = "none") +
     xlab("Computational Structure") +
@@ -119,7 +130,7 @@ data_viz_end <- function(df, data_filename) {
     NULL
   
   endscore_filename <- paste(data_prefix, "_end_score.png",sep="")
-  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=12, height=8, units="in")
+  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=6, height=12, units="in")
   paste("endscore done")
 }
 
@@ -127,7 +138,8 @@ data_viz_end <- function(df, data_filename) {
 # Call the function
 ##########
 
+
 for (file in datafiles) {
   data_viz_end(data_load(file), file)
-  data_viz_time(data_load(file),file)
+  #data_viz_time(data_load(file),file)
 }
