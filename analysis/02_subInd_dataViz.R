@@ -41,8 +41,9 @@ data_load <- function(data_filename) {
                                      "RNN discretized",
                                      "RNN sparse",
                                      "RNN"))
-  return(df)
   
+  return(df)
+
 }
   
 data_viz_time <- function(df, data_filename) {
@@ -88,39 +89,28 @@ data_viz_end <- function(df, data_filename) {
   # grab the file prefix (before .csv)
   # credit: https://stackoverflow.com/questions/30836747/regex-to-remove-csv-in-r
   data_prefix <- str_extract(data_filename, '.*(?=\\.csv$)')
-
-  df_meanscore <- df %>%
-    group_by(compstruct, update, world) %>% # group_by preserves the columns we want to have as variables
-    summarise(mean.score=mean(score),
-              sd.score=sd(score),
-              n=n()) %>%
-    filter(n != 1) %>%
-    mutate(se.score = sd.score/sqrt(n), # get confidence intervals
-           lower.ci.score = mean.score - qt(1-(0.05/2), n-1)*se.score,
-           upper.ci.score = mean.score + qt(1-(0.05/2), n-1)*se.score) %>%
-    {.}
   
   df_endscore <- df %>%
     filter(update == 100000) %>%
     {.}
   
-  # reorder the compstruct factors
-  color_scale <- c("Markov" = "#CC3300",
-                    "Markov ANN bitted" = "#FF6633",
-                    "Markov ANN"="#FF9966",
-                    "RNN sparse discretized"="#CC99FF",
-                    "RNN discretized"="#9966CC",
-                    "RNN sparse"="#9966CC",
-                    "RNN"="#663399")
- 
+  # add color scale
+  color_map <- c("Markov" = "#CC3300", 
+                 "Markov ANN bitted" = "#FF6633", 
+                 "Markov ANN" = "#FF9966", 
+                 "RNN sparse discretized"  = "#CC99FF", 
+                 "RNN discretized" = "#9966CC", 
+                 "RNN sparse" = "#9966CC", 
+                 "RNN" = "#663399")
+  
   plot_endscore <- ggplot(data=df_endscore,
                      aes(x=compstruct, y=score)) +
     geom_boxplot(aes(fill=compstruct, alpha=0.3, color=compstruct)) +
     geom_dotplot(binaxis="y", stackdir="center", dotsize=0.3, stackratio=0.8, binwidth=0.025,
                  aes(fill=compstruct)) +
-    scale_color_manual(values=color_scale) + 
-    scale_fill_manual(values=color_scale) + 
-    facet_wrap(~world, ncol=1, scales="free") +
+    scale_fill_manual(values=color_map) + 
+    scale_color_manual(values=color_map)+
+    facet_wrap(~world) +
     theme_bw() +
     theme(legend.position = "none") +
     xlab("Computational Structure") +
@@ -130,7 +120,7 @@ data_viz_end <- function(df, data_filename) {
     NULL
   
   endscore_filename <- paste(data_prefix, "_end_score.png",sep="")
-  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=6, height=12, units="in")
+  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=12, height=8, units="in")
   paste("endscore done")
 }
 
@@ -141,5 +131,5 @@ data_viz_end <- function(df, data_filename) {
 
 for (file in datafiles) {
   data_viz_end(data_load(file), file)
-  #data_viz_time(data_load(file),file)
+  data_viz_time(data_load(file),file)
 }
