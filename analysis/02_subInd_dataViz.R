@@ -91,7 +91,7 @@ data_viz_end <- function(df, data_filename) {
   data_prefix <- str_extract(data_filename, '.*(?=\\.csv$)')
   
   df_endscore <- df %>%
-    filter(update == 100000) %>%
+    filter(update == 200000) %>%
     {.}
   
   # add color scale
@@ -105,22 +105,23 @@ data_viz_end <- function(df, data_filename) {
   
   plot_endscore <- ggplot(data=df_endscore,
                      aes(x=compstruct, y=score)) +
-    geom_boxplot(aes(fill=compstruct, alpha=0.3, color=compstruct)) +
-    geom_dotplot(binaxis="y", stackdir="center", dotsize=0.3, stackratio=0.8, binwidth=0.025,
-                 aes(fill=compstruct)) +
+    geom_boxplot(aes(fill=compstruct, alpha=0.5, color=compstruct)) +
+    #geom_dotplot(binaxis="y", stackdir="center", dotsize=0.3, stackratio=0.9,aes(fill=compstruct)) +
     scale_fill_manual(values=color_map) + 
     scale_color_manual(values=color_map)+
-    facet_wrap(~world) +
+    facet_wrap(~world, ncol=1, scales="free_y") +
     theme_bw() +
     theme(legend.position = "none") +
     xlab("Computational Structure") +
     ylab("Final Score") +
     theme(axis.title=element_text(size=14)) +
     theme(axis.text.x = element_text(angle=45, hjust=1))+
+    theme(strip.text = element_text(size=14)) +
+    theme(strip.background=element_rect(fill="white"))
     NULL
   
   endscore_filename <- paste(data_prefix, "_end_score.png",sep="")
-  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=12, height=8, units="in")
+  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=4, height=12, units="in")
   paste("endscore done")
 }
 
