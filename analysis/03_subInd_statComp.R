@@ -33,12 +33,18 @@ data_load <- function(data_filename) {
   # reorder the compstruct factors
   df$compstruct <- factor(df$compstruct, 
                           levels = c("Markov",
-                                     "Markov ANN bitted",
-                                     "Markov ANN",
+                                     "Markov RNN bitted",
+                                     "Markov RNN",
                                      "RNN sparse discretized",
                                      "RNN discretized",
                                      "RNN sparse",
                                      "RNN"))
+  
+  # reorder the worlds
+  df$world <- factor(df$world,
+                     levels=c("NBack",
+                              "PathFollow",
+                              "BlockCatch"))
   
   return(df)
 
@@ -47,9 +53,26 @@ data_load <- function(data_filename) {
 df <- data_load(datafile)
 
 df <- df %>%
-  filter(update==200000) %>%
-  filter(world=="BlockCatch")
+  filter(update==200000)
 
-model_fit <- glm(df$score ~ df$compstruct, family="Gamma")
-emm <- emmeans(model_fit, specs=pairwise~compstruct)
-emm$contrasts
+# EMm gives us which values are significant
+model_fit <- glm(data=df,score ~ compstruct*world)
+emm <- emmeans(model_fit, specs=pairwise~compstruct|world)
+summary(emm)
+
+# specifically test whether MB and MB RNN bitted in BlockCatch are different distributions
+# they are not
+blockcatch.mb <- df %>%
+  filter(update==200000, compstruct=="Markov", world=="BlockCatch") %>%
+  select(score) %>%
+  unlist %>%
+  as.numeric()
+
+blockcatch.mbrnn <- df %>%
+  filter(update==200000, compstruct=="Markov RNN bitted", world=="BlockCatch") %>%
+  select(score) %>%
+  unlist %>%
+  as.numeric()
+
+ks <- ks.test(blockcatch.mb, blockcatch.mbrnn)
+ks
