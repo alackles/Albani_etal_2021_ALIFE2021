@@ -84,7 +84,7 @@ def merge_my_file(filename):
 
                 # add to our list of dataframes for each k
                 merged_file = merged_file.append(filemerge, sort=False)
-    filepath = final_datapath + "beginmerged_" + filename
+    filepath = final_datapath + "merged_" + filename
     merged_file.to_csv(filepath,index=False)
 
 
