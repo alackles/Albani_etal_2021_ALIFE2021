@@ -32,8 +32,8 @@ worlds = ["BlockCatch", "PathFollow", "NBack"] # NBack
 
 compstruct = {
     "BRN_Markov__MDA_1": "Markov", 
-    "BRN_Markov__MDA_0__MAA_1__MBB_0": "Markov ANN", 
-    "BRN_Markov__MDA_0__MAA_1__MBB_1": "Markov ANN bitted", 
+    "BRN_Markov__MAA_1__MBB_0": "Markov RNN", 
+    "BRN_Markov__MAA_1__MBB_1": "Markov RNN bitted", 
     "BRN_RNN__RWR_01010__RDR_-1": "RNN", 
     "BRN_RNN__RWR_01010__RDR_1": "RNN discretized", 
     "BRN_RNN__RWR_01410__RDR_-1": "RNN sparse", 
@@ -84,7 +84,7 @@ def merge_my_file(filename):
 
                 # add to our list of dataframes for each k
                 merged_file = merged_file.append(filemerge, sort=False)
-    filepath = final_datapath + "merged_" + filename
+    filepath = final_datapath + "beginmerged_" + filename
     merged_file.to_csv(filepath,index=False)
 
 
