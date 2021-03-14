@@ -35,12 +35,18 @@ data_load <- function(data_filename) {
   # reorder the compstruct factors
   df$compstruct <- factor(df$compstruct, 
                           levels = c("Markov",
-                                     "Markov ANN bitted",
-                                     "Markov ANN",
+                                     "Markov RNN bitted",
+                                     "Markov RNN",
                                      "RNN sparse discretized",
                                      "RNN discretized",
                                      "RNN sparse",
                                      "RNN"))
+  
+  # reorder the worlds
+  df$world <- factor(df$world,
+                     levels=c("NBack",
+                             "PathFollow",
+                             "BlockCatch"))
   
   return(df)
 
@@ -96,32 +102,33 @@ data_viz_end <- function(df, data_filename) {
   
   # add color scale
   color_map <- c("Markov" = "#CC3300", 
-                 "Markov ANN bitted" = "#FF6633", 
-                 "Markov ANN" = "#FF9966", 
+                 "Markov RNN bitted" = "#FF6633", 
+                 "Markov RNN" = "#FF9966", 
                  "RNN sparse discretized"  = "#CC99FF", 
                  "RNN discretized" = "#9966CC", 
                  "RNN sparse" = "#9966CC", 
                  "RNN" = "#663399")
   
   plot_endscore <- ggplot(data=df_endscore,
-                     aes(x=compstruct, y=score)) +
-    geom_boxplot(aes(fill=compstruct, alpha=0.5, color=compstruct)) +
-    #geom_dotplot(binaxis="y", stackdir="center", dotsize=0.3, stackratio=0.9,aes(fill=compstruct)) +
+                     aes(x=compstruct, y=score, fill=compstruct, alpha=0.5, color=compstruct)) +
+    geom_violin(scale="width", aes(color=NA)) +
+    geom_boxplot(aes(fill=NA),width=0.1)+
+    stat_summary(fun=mean, geom="point", size=2, color="black") +
     scale_fill_manual(values=color_map) + 
     scale_color_manual(values=color_map)+
     facet_wrap(~world, ncol=1, scales="free_y") +
     theme_bw() +
     theme(legend.position = "none") +
-    xlab("Computational Structure") +
-    ylab("Final Score") +
+    xlab("\nComputational Structure") +
+    ylab("Final Score\n") +
     theme(axis.title=element_text(size=14)) +
     theme(axis.text.x = element_text(angle=45, hjust=1))+
     theme(strip.text = element_text(size=14)) +
     theme(strip.background=element_rect(fill="white"))
     NULL
   
-  endscore_filename <- paste(data_prefix, "_end_score.png",sep="")
-  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=4, height=12, units="in")
+  endscore_filename <- paste(data_prefix, "_end_score.pdf",sep="")
+  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=4.5, height=12, units="in")
   paste("endscore done")
 }
 
@@ -132,5 +139,5 @@ data_viz_end <- function(df, data_filename) {
 
 for (file in datafiles) {
   data_viz_end(data_load(file), file)
-  data_viz_time(data_load(file),file)
+  #data_viz_time(data_load(file),file)
 }
