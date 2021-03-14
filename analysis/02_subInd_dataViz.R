@@ -112,7 +112,7 @@ data_viz_end <- function(df, data_filename) {
   plot_endscore <- ggplot(data=df_endscore,
                      aes(x=compstruct, y=score, fill=compstruct, alpha=0.5, color=compstruct)) +
     geom_violin(scale="width", aes(color=NA)) +
-    geom_boxplot(aes(fill=NA),width=0.1)+
+    geom_boxplot(aes(fill=NA),width=0.1, outlier.size=1, outlier.alpha = 1)+
     stat_summary(fun=mean, geom="point", size=2, color="black") +
     scale_fill_manual(values=color_map) + 
     scale_color_manual(values=color_map)+
