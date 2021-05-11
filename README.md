@@ -17,7 +17,3 @@ We then tested these hybrids across a suite of distinct environments in which th
 While we observed trends across different options for core logic, sparsity of a network, and whether memory values were limited to discrete states, we identified the last of these, discreteness of memory, as an especially important determinant of performance across our tested conditions. 
 However, the specific effect of discretization varied by environment and whether the associated task required integration of information across different time points or spatial locations.
 Our results demonstrate that this comparative hybrid approach can isolate structural components that enable cognition and facilitate task performance across multiple computational structures.
-
-## Reproducibility
-
-Coming soon!
