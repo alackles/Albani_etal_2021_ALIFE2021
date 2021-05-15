@@ -98,4 +98,4 @@ And that's it! You've successfully replicated our project!
 
 For issues in this documentation, contact [Acacia Ackles](https://alackles.github.io/).
 
-[//]: # see you, space cowboy...
+<!--- see you, space cowboy... --->
