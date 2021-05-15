@@ -1,6 +1,6 @@
 # The Comparative Hybrid Approach to Investigate Cognition across Substrates
 
-This work is accepted as a full paper to the [2021 Conference on Artificial Life.](https://www.robot100.cz/alife2021/). You can watch our talk there between July 13-23, 2021!
+This work is accepted as a full paper to the [2021 Conference on Artificial Life.](https://www.robot100.cz/alife2021/). You can watch our talk there between July 19-23, 2021!
 
 The corresponding author is Sarah Albani; contact her at albanisa at msu dot edu.
 
