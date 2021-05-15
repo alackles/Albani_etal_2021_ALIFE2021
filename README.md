@@ -6,7 +6,7 @@ The corresponding author is Sarah Albani; contact her at albanisa at msu dot edu
 
 ## Overview
 
-[Hybrid Brains](https://github.com/alackles/Albani_etal_2021_ALIFE2021/blob/main/figs/Markov_vs_RNN_H.png)
+![Hybrid Brains](https://github.com/alackles/Albani_etal_2021_ALIFE2021/blob/main/figs/Markov_vs_RNN_H.png)
 
 This work uses a new approach, the _comparative hybrid approach_, to investigate what components of computational structures allow for the performance of certain cognitive tasks. We look at **sparsity** and **discretization** as key elements of computational cognition. 
 
