@@ -62,7 +62,7 @@ If you are at MSU, launching on a computing cluster can be achieved by doing the
 
 `python3 ../tools/mq.py -i`
 
-If you are not at MSU, you can adjust down the number of runs or replicates by editing the `mq_conditions.txt` file. See again the [MABE wiki](https://github.com/Hintzelab/MABE/wiki/Installation-and-getting-started-with-MABE#generating-settings-files) for some ideas on how to do this, and in particular the [https://github.com/Hintzelab/MABE/blob/master/tools/mq_conditions.txt](default conditions file).
+If you are not at MSU, you can adjust down the number of runs or replicates by editing the `mq_conditions.txt` file. See again the [MABE wiki](https://github.com/Hintzelab/MABE/wiki/Installation-and-getting-started-with-MABE#generating-settings-files) for some ideas on how to do this, and in particular the [default conditions file](https://github.com/Hintzelab/MABE/blob/master/tools/mq_conditions.txt).
 
 If you do wish to run these replicates locally, after editing the conditions file to something sane, you can run
 
