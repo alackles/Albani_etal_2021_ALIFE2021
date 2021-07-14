@@ -7,7 +7,7 @@
 
 # Set paths
 
-proj_path <- "/home/acacia/Documents/research/substrate_independence/"
+proj_path <- "/home/acacia/Documents/research/Albani_etal_2021_ALIFE2021/"
 data_path <- paste(proj_path, "data/", sep="")
 fig_path <- paste(proj_path, "figs/", sep="")
 
@@ -15,7 +15,7 @@ fig_path <- paste(proj_path, "figs/", sep="")
 library(tidyverse)
 
 # Files to process
-datafiles <- c("merged_LOD_data.csv")
+datafile <- "merged_LOD_data.csv"
 
 #############
 # Visualization Function
@@ -88,7 +88,7 @@ data_viz_time <- function(df, data_filename) {
 
 }
 
-data_viz_end <- function(df, data_filename) {
+data_viz_end <- function(df, data_filename, worldname) {
 
   ## DATA PROCESSING & VISUALIZATION FOR FINAL SCORE
   
@@ -98,6 +98,7 @@ data_viz_end <- function(df, data_filename) {
   
   df_endscore <- df %>%
     filter(update == 200000) %>%
+    filter(world == worldname) %>%
     {.}
   
   # add color scale
@@ -111,12 +112,11 @@ data_viz_end <- function(df, data_filename) {
   
   plot_endscore <- ggplot(data=df_endscore,
                      aes(x=compstruct, y=score, fill=compstruct, alpha=0.5, color=compstruct)) +
-    geom_violin(scale="width", aes(color=NA)) +
-    geom_boxplot(aes(fill=NA),width=0.1, outlier.size=1, outlier.alpha = 1)+
+    geom_violin(scale="width", color=NA) +
+    geom_boxplot(fill = NA,width=0.1, outlier.size=1, outlier.alpha = 1)+
     stat_summary(fun=mean, geom="point", size=2, color="black") +
     scale_fill_manual(values=color_map) + 
     scale_color_manual(values=color_map)+
-    facet_wrap(~world, ncol=1, scales="free_y") +
     theme_bw() +
     theme(legend.position = "none") +
     xlab("\nComputational Structure") +
@@ -127,8 +127,8 @@ data_viz_end <- function(df, data_filename) {
     theme(strip.background=element_rect(fill="white"))
     NULL
   
-  endscore_filename <- paste(data_prefix, "_end_score.pdf",sep="")
-  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=4.5, height=12, units="in")
+  endscore_filename <- paste(worldname, "_", data_prefix, "_end_score.pdf",sep="")
+  ggsave(filename=paste(fig_path,endscore_filename,sep=""),plot=plot_endscore, width=10, height=5, units="in")
   paste("endscore done")
 }
 
@@ -136,6 +136,8 @@ data_viz_end <- function(df, data_filename) {
 # Call the function
 ##########
 
+df <- data_load(datafile)
+sapply(levels(df$world), data_viz_end, df=df, data_filename=datafile)
 
 for (file in datafiles) {
   data_viz_end(data_load(file), file)
